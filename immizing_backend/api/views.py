@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializers import FNSerializer,AddressSerializer
-
+from .models import *
 
 # Initialise environment variables
 env = environ.Env()
@@ -38,13 +38,20 @@ def home(request):
 @api_view(['POSt'])
 def createMyInfo(request):
     data=request.data
-    presentAddr=data['present']
-    addrserializer=AddressSerializer(data=presentAddr)
+    presentAddrData=data['present']
+    # copyPresToPrev=data['copyPresToPrev']
+
+    addrserializer=AddressSerializer(data=presentAddrData)
         
     if addrserializer.is_valid():
         addrserializer.save()
-        return Response("present address was saved")
-    else:
-        return Response("not created")
+    
+    presentAddr=Address.objects.get(Street=presentAddrData['Street'],city=presentAddrData['city'],state=presentAddrData['state'],zip_code=presentAddrData['zip_code'])
+    # if copyPresToPrev==True:
+    ForeignNationalInfo.objects.create(
+        FirstName=data['FirstName'],LastName=data['LastName'],Date_of_Birth=data['Date_of_Birth'],Email=data['Email'],Phone=data['Phone'],SSN=data['SSN'],presentAddress=presentAddr)
+    return Response("MyInfo was saved")
+    # else:
+    #     return Response("not created")
     
 

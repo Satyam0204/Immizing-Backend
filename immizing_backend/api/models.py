@@ -18,7 +18,7 @@ class ForeignNationalInfo(models.Model):
     SSN=models.CharField(max_length=500)
     presentAddress=models.ForeignKey(Address,on_delete=models.CASCADE,null=True,related_name='presentAddress')
     previousAddresses=models.ManyToManyField(Address,blank=True,related_name='previousAddress')
-    mailingAddress=models.ForeignKey(Address,on_delete=models.CASCADE,null=True,related_name='mailingAddress')
+    mailingAddress=models.ForeignKey(Address,on_delete=models.CASCADE,null=True,blank=True,related_name='mailingAddress')
     copyprevtopresentAddr=models.BooleanField(default=0)
     
     def prevToCurrAddr(self):
