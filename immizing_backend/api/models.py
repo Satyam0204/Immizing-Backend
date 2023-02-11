@@ -19,11 +19,7 @@ class ForeignNationalInfo(models.Model):
     presentAddress=models.ForeignKey(Address,on_delete=models.CASCADE,null=True,related_name='presentAddress')
     previousAddresses=models.ManyToManyField(Address,blank=True,related_name='previousAddress')
     mailingAddress=models.ForeignKey(Address,on_delete=models.CASCADE,null=True,blank=True,related_name='mailingAddress')
-    copyprevtopresentAddr=models.BooleanField(default=0)
-    
-    def prevToCurrAddr(self):
-        if(self.copyprevtopresentAddr):
-            self.previousAddresses.add(self.presentAddress)
+
 
     def __str__(self):
         return self.FirstName+" "+self.LastName
