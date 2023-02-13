@@ -15,7 +15,7 @@ class ForeignNationalInfo(models.Model):
     Date_of_Birth=models.DateField()
     Email=models.EmailField()
     Phone=models.CharField(max_length=10)
-    SSN=models.CharField(max_length=500)
+    SSN=models.CharField(max_length=500,unique=True)
     presentAddress=models.ForeignKey(Address,on_delete=models.CASCADE,null=True,related_name='presentAddress')
     previousAddresses=models.ManyToManyField(Address,blank=True,related_name='previousAddress')
     mailingAddress=models.ForeignKey(Address,on_delete=models.CASCADE,null=True,blank=True,related_name='mailingAddress')

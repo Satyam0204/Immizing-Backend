@@ -40,21 +40,38 @@ def createMyInfo(request):
     data=request.data
     presentAddrData=data['present']
     copyPresToPrev=data['copyPresToPrev']
-
+    if (data['mailingaddr']):
+        mailingAddrData=data['mailingaddr']
+        addrserializer=AddressSerializer(data=mailingAddrData)
+        if addrserializer.is_valid():
+            addrserializer.save()
     addrserializer=AddressSerializer(data=presentAddrData)
         
     if addrserializer.is_valid():
         addrserializer.save()
+
+
+    presentAddr=Address.objects.filter(Street=presentAddrData['Street'],city=presentAddrData['city'],state=presentAddrData['state'],zip_code=presentAddrData['zip_code'])
     
-    presentAddr=Address.objects.get(Street=presentAddrData['Street'],city=presentAddrData['city'],state=presentAddrData['state'],zip_code=presentAddrData['zip_code'])
-    # if copyPresToPrev==True:
     ForeignNationalInfo.objects.create(
         FirstName=data['FirstName'],LastName=data['LastName'],Date_of_Birth=data['Date_of_Birth'],Email=data['Email'],Phone=data['Phone'],SSN=data['SSN'],presentAddress=presentAddr)
     myinfoObj=ForeignNationalInfo.objects.get(SSN=data['SSN'])
     if copyPresToPrev==True:
         myinfoObj.previousAddresses.add(presentAddr)
+    else:
+        previous=data['mailingaddr']
+        addrserializer=AddressSerializer(data=mailingAddrData)
+        if addrserializer.is_valid():
+            addrserializer.save()
 
-    return Response("MyInfo was saved")
+    context={
+        "success":True,
+        "success_code":200,
+        "message":"My info was saved",
+        
+
+    }
+    return Response(context)
     # else:
     #     return Response("not created")
     
