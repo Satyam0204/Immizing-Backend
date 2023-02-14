@@ -40,7 +40,7 @@ def createMyInfo(request):
     data=request.data
     presentAddrData=data['present']
     copyPresToPrev=data['copyPresToPrev']
-    if (data['mailingaddr']):
+    if ('mailingaddr' in data):
         mailingAddrData=data['mailingaddr']
         addrserializer=AddressSerializer(data=mailingAddrData)
         if addrserializer.is_valid():
@@ -51,19 +51,23 @@ def createMyInfo(request):
         addrserializer.save()
 
 
-    presentAddr=Address.objects.filter(Street=presentAddrData['Street'],city=presentAddrData['city'],state=presentAddrData['state'],zip_code=presentAddrData['zip_code'])
+    presentAddr=Address.objects.filter(Street=presentAddrData['Street'],city=presentAddrData['city'],state=presentAddrData['state'],zip_code=presentAddrData['zip_code']).first()
     
     ForeignNationalInfo.objects.create(
         FirstName=data['FirstName'],LastName=data['LastName'],Date_of_Birth=data['Date_of_Birth'],Email=data['Email'],Phone=data['Phone'],SSN=data['SSN'],presentAddress=presentAddr)
     myinfoObj=ForeignNationalInfo.objects.get(SSN=data['SSN'])
     if copyPresToPrev==True:
         myinfoObj.previousAddresses.add(presentAddr)
+        print("same as present")
     else:
-        previous=data['mailingaddr']
-        addrserializer=AddressSerializer(data=mailingAddrData)
+        previousAddrData=data['previous']
+        addrserializer=AddressSerializer(data=previousAddrData)
         if addrserializer.is_valid():
             addrserializer.save()
 
+        previoustAddr=Address.objects.filter(Street=previousAddrData['Street'],city=previousAddrData['city'],state=previousAddrData['state'],zip_code=previousAddrData['zip_code']).first()
+        myinfoObj.previousAddresses.add(previoustAddr)
+        print("previous add")
     context={
         "success":True,
         "success_code":200,
